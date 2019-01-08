@@ -507,6 +507,14 @@ export default class M3RecordData {
     }
   }
 
+  attributesDef() {
+    let attrs = {};
+    this.eachAttribute((attr, key) => {
+      attrs[attr] = { key: attr };
+    });
+    return attrs;
+  }
+
   /**
    * Returns an object, whose keys are changed properties, and value is an
    * [oldProp, newProp] array.

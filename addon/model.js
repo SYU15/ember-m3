@@ -143,15 +143,9 @@ export default class MegamorphicModel extends EmberObject {
     return true;
   }
 
-  static get klass() {
-    return MegamorphicModel;
+  static create(properties) {
+    return new this(properties);
   }
-
-  static get attributes() {
-    return YesManAttributes;
-  }
-
-  static eachRelationship(/* callback */) {}
 
   get _modelName() {
     return this._internalModel.modelName;
@@ -229,10 +223,6 @@ export default class MegamorphicModel extends EmberObject {
 
   debugJSON() {
     return recordDataFor(this)._data;
-  }
-
-  eachAttribute(callback, binding) {
-    return recordDataFor(this).eachAttribute(callback, binding);
   }
 
   unloadRecord() {

@@ -141,10 +141,10 @@ module('unit/model', function(hooks) {
 
   test('it appears as a model to ember data', function(assert) {
     assert.equal(MegamorphicModel.isModel, true, 'M3.isModel');
-    assert.equal(MegamorphicModel.klass, MegamorphicModel, 'M3.klass');
+    //assert.equal(MegamorphicModel.klass, MegamorphicModel, 'M3.klass');
 
-    let klassAttrsMap = MegamorphicModel.attributes;
-    assert.equal(typeof klassAttrsMap.has, 'function', 'M3.attributes.has()');
+    //let klassAttrsMap = MegamorphicModel.attributes;
+    //assert.equal(typeof klassAttrsMap.has, 'function', 'M3.attributes.has()');
   });
 
   test('.unknownProperty returns undefined for attributes not included in the payload', function(assert) {
