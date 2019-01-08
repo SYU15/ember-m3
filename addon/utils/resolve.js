@@ -23,5 +23,5 @@ export function resolveReferencesWithInternalModels(store, references) {
 }
 
 export function isResolvedValue(value) {
-  return value && value.constructor && value.constructor.isModel;
+  return value && value.constructor && (value.constructor.isModel || value.constructor.isM3Model);
 }

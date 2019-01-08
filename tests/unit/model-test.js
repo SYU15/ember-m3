@@ -993,7 +993,7 @@ module('unit/model', function(hooks) {
     // value is resolved upon invoking get
     const nextChapter = get(model, 'nextChapter');
     assert.ok(
-      model._cache['nextChapter'].constructor.isModel,
+      model._cache['nextChapter'].constructor.isM3Model,
       'cache is updated upon invoking get'
     );
     assert.strictEqual(
