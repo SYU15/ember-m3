@@ -33,6 +33,7 @@ const {
 class EmbeddedSnapshot {
   constructor(record) {
     this.record = record;
+    debugger;
     this.modelName = this.record._internalModel.modelName;
     this.attrs = Object.create(null);
     this.eachAttribute(key => (this.attrs[key] = this.record.get(key)));
@@ -43,7 +44,8 @@ class EmbeddedSnapshot {
   }
 
   eachAttribute(callback, binding) {
-    return this.record.eachAttribute(callback, binding);
+    let recordData = recordDataFor(this.record);
+    return recordData.eachAttribute(callback, binding);
   }
 
   attr(key) {
@@ -389,10 +391,6 @@ export default class MegamorphicModel extends EmberObject {
 
     let schemaInterface = recordDataFor(this).schemaInterface;
     let isResolved = this._schema.isAttributeResolved(this._modelName, key, value, schemaInterface);
-<<<<<<< HEAD
-=======
-
->>>>>>> Add `isAttributeResolved` schema hook
     if (isResolved) {
       // resolved value, cache directly
       this._cache[key] = value;

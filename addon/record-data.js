@@ -146,6 +146,8 @@ export default class M3RecordData {
     this._data = null;
     this._attributes = null;
     this.__inFlightAttributes = null;
+    this._isNew = false;
+    this._isDeleted = false;
 
     // Properties related to child recordDatas
     this._parentRecordData = parentRecordData;
@@ -278,6 +280,7 @@ export default class M3RecordData {
   }
 
   didCommit(jsonApiResource, notifyRecord = false) {
+    this._isNew = false;
     if (jsonApiResource && jsonApiResource.id) {
       this.id = '' + jsonApiResource.id;
     }
@@ -393,6 +396,17 @@ export default class M3RecordData {
     }
   }
 
+  isNew() {
+    return this._isNew;
+  }
+
+  setIsDeleted(value) {
+    this.isDeleted = value;
+  }
+
+  isDeleted() {
+    return this._isDeleted;
+  }
   /**
    * @param {string} key
    * @private
@@ -476,7 +490,9 @@ export default class M3RecordData {
 
   removeFromInverseRelationships() {}
 
-  clientDidCreate() {}
+  clientDidCreate() {
+    this._isNew = true;
+  }
 
   // INTERNAL API
 
