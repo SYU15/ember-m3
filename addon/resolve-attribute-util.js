@@ -138,7 +138,7 @@ function createNestedModel(store, record, recordData, key, nestedValue, parentId
   });
   internalModel.record = nestedModel;
 
-  let nestedRecordData = recordDataFor(internalModel);
+  let nestedRecordData = recordDataFor(nestedModel);
 
   if (
     !recordData.getServerAttr ||

@@ -1,5 +1,7 @@
 import { IS_RECORD_DATA } from 'ember-compatibility-helpers';
 
+let recordDataMap = new WeakMap();
+
 export function recordDataFor(recordOrInternalModel) {
   let internalModel = recordOrInternalModel._internalModel || recordOrInternalModel;
 

@@ -59,11 +59,11 @@ const STORE_OVERRIDES = {
     return this._super(modelName);
   },
 
-  instantiateRecord(modelName, createOptions) {
+  instantiateRecord(modelName, createOptions, recordData) {
     // TODO NOW deal with this
     if (get(this, '_schemaManager').includesModel(modelName)) {
       delete createOptions.container;
-      return new MegamorphicModel(createOptions);
+      return new MegamorphicModel(createOptions, recordData);
     }
     return this._super(modelName, createOptions);
   },

@@ -34,7 +34,9 @@ class EmbeddedSnapshot {
   constructor(record) {
     this.record = record;
     debugger;
-    this.modelName = this.record._internalModel.modelName;
+    // TODO this line seems untested
+    this.modelName = this.record._recordData.modelName;
+
     this.attrs = Object.create(null);
     this.eachAttribute(key => (this.attrs[key] = this.record.get(key)));
   }
@@ -59,7 +61,13 @@ export class EmbeddedInternalModel {
     this.id = id;
     this.modelName = modelName;
 
-    let recordData = recordDataFor(parentInternalModel)._getChildRecordData(
+    let parentRecordData;
+    if (!IS_RECORD_DATA) {
+      parentRecordData = parentInternalModel._modelData;
+    } else {
+      parentRecordData = parentInternalModel._recordData;
+    }
+    let recordData = parentRecordData._getChildRecordData(
       parentKey,
       parentIdx,
       modelName,
@@ -104,15 +112,45 @@ const retrieveFromCurrentState = computed('_topModel.currentState', function(key
   return this._topModel._internalModel.currentState[key];
 }).readOnly();
 
+/**
+    If this property is `true` the record is in the `valid` state.
+
+    A record will be in the `valid` state when the adapter did not report any
+    server-side validation failures.
+
+    @property isValid
+    @type {Boolean}
+    @readOnly
+  */
+const isValid = computed(function() {
+  if (this.get('errors.length') > 0) {
+    return false;
+  }
+
+  let invalidRequest = this._getInvalidRequest();
+  if (!invalidRequest) {
+    return true;
+  } else {
+    if (this._getInvalidRequestsToIgnore().get(invalidRequest)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+}).volatile();
+
 // global buffer for initial properties to work around
 //  a)  can't write to `this` before `super`
 //  b)  core_object writes properties before calling `init`; this means that no
 //      CP or setknownProperty can rely on any initialization
 let initProperites = Object.create(null);
 
+let ignoreInvalidRequestsMap = new WeakMap();
+let ignoreErrorRequestsMap = new WeakMap();
 export default class MegamorphicModel extends EmberObject {
-  init(properties) {
+  init(properties, recordData) {
     // Drop Ember.Object subclassing instead
+    this._recordData = recordData;
     super.init(...arguments);
     this._store = properties.store;
     this._internalModel = properties._internalModel;
@@ -139,6 +177,27 @@ export default class MegamorphicModel extends EmberObject {
         this.setUnknownProperty(key, value);
       }
     }
+  }
+
+  _getInvalidRequest() {
+    //temp until identifiers
+    let identifier = { id: this.id, modelName: this.modelName };
+    //let requests = this.store.requestCache.getFinished(identifierForModel(this));
+    let requests = this.store.requestCache.getFinished(identifier);
+    return requests.find(
+      req => req.state === 'rejected' && req.result.error instanceof InvalidError
+    );
+  }
+
+  _markInvalidRequestAsClean() {
+    let invalidRequest = this._getInvalidRequest();
+    if (invalidRequest) {
+      ignoreInvalidRequestsMap.set(invalidRequest, true);
+    }
+  }
+
+  _getInvalidRequestsToIgnore() {
+    return ignoreInvalidRequestsMap;
   }
 
   static get isM3Model() {
@@ -264,7 +323,6 @@ export default class MegamorphicModel extends EmberObject {
   }
 
   deleteRecord() {
-
     recordDataFor(this).setIsDeleted(true);
     let newState = get(this, 'isNew') ? deletedSaved : deletedUncommitted;
     this._updateCurrentState(newState);
@@ -276,6 +334,7 @@ export default class MegamorphicModel extends EmberObject {
   }
 
   rollbackAttributes() {
+    this._markInvalidRequestAsClean();
     if (DEBUG) {
       assertNoChanges(this._store);
     }
@@ -485,7 +544,7 @@ defineProperty(MegamorphicModel.prototype, 'isLoaded', retrieveFromCurrentState)
 defineProperty(MegamorphicModel.prototype, 'isSaving', retrieveFromCurrentState);
 defineProperty(MegamorphicModel.prototype, 'isDeleted', retrieveFromCurrentState);
 defineProperty(MegamorphicModel.prototype, 'isNew', retrieveFromCurrentState);
-defineProperty(MegamorphicModel.prototype, 'isValid', retrieveFromCurrentState);
+defineProperty(MegamorphicModel.prototype, 'isValid', isValid);
 defineProperty(MegamorphicModel.prototype, 'isDirty', retrieveFromCurrentState);
 defineProperty(MegamorphicModel.prototype, 'dirtyType', retrieveFromCurrentState);
 
