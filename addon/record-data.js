@@ -161,6 +161,7 @@ export default class M3RecordData {
     // Properties related to projections
     this._baseRecordData = baseRecordData;
     this._projections = null;
+    this._recordArrays = new Set(); 
 
     this._initBaseRecordData();
   }
@@ -477,11 +478,17 @@ export default class M3RecordData {
     if (this.isDestroyed) {
       return;
     }
+    this.removeFromRecordArrays();
     if (this._baseRecordData || this._areAllProjectionsDestroyed()) {
       this._destroy();
     }
   }
 
+  removeFromRecordArrays() {
+    this._recordArrays.forEach((recordArray) => {
+      recordArray._removeRecordData(this);
+    });
+  }
   /**
    * @returns {boolean}
    */

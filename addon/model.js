@@ -87,10 +87,6 @@ export class EmbeddedInternalModel {
   createSnapshot() {
     return new EmbeddedSnapshot(this.record);
   }
-
-  changedAttributes() {
-    return this._recordData.changedAttributes();
-  }
 }
 
 class YesManAttributesSingletonClass {
@@ -277,7 +273,7 @@ export default class MegamorphicModel extends EmberObject {
   }
 
   changedAttributes() {
-    return this._internalModel.changedAttributes();
+    return this._recordData.changedAttributes();
   }
 
   trigger() {}
@@ -310,6 +306,7 @@ export default class MegamorphicModel extends EmberObject {
 
   save(options) {
     // TODO: we could return a PromiseObject as DS.Model does
+    // this becomes this.store.scheduleSave(identifier)
     return this._internalModel.save(options).then(() => this);
   }
 
@@ -329,7 +326,7 @@ export default class MegamorphicModel extends EmberObject {
 
   destroyRecord(options) {
     this.deleteRecord();
-    return this._internalModel.save(options);
+    return this.save(options);
   }
 
   rollbackAttributes() {

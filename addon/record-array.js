@@ -158,5 +158,5 @@ export function associateRecordWithRecordArray(record, recordArray) {
     // other tracked array is undefined behaviour
     return;
   }
-  record._internalModel._recordArrays.add(recordArray);
+  record._recordData._recordArrays.add(recordArray);
 }

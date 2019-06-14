@@ -90,4 +90,16 @@ export default class M3TrackedArray extends ArrayProxy {
       }
     }
   }
+
+  _removeRecordData(recordData) {
+    for (let i = this.content.length; i >= 0; --i) {
+      let item = this.content.objectAt(i);
+      if (isResolvedValue(item)) {
+        if (recordData === item._recordData) {
+          this.content.removeAt(i);
+          break;
+        }
+      }
+    }
+  }
 }
