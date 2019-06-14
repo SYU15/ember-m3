@@ -33,7 +33,6 @@ const {
 class EmbeddedSnapshot {
   constructor(record) {
     this.record = record;
-    debugger;
     // TODO this line seems untested
     this.modelName = this.record._recordData.modelName;
 
@@ -148,11 +147,11 @@ let initProperites = Object.create(null);
 let ignoreInvalidRequestsMap = new WeakMap();
 let ignoreErrorRequestsMap = new WeakMap();
 export default class MegamorphicModel extends EmberObject {
-  init(properties, recordData) {
+  init(properties) {
     // Drop Ember.Object subclassing instead
-    this._recordData = recordData;
     super.init(...arguments);
     this._store = properties.store;
+    this._recordData = properties._recordData;
     this._internalModel = properties._internalModel;
     this._cache = Object.create(null);
     this._schema = get(properties.store, '_schemaManager');
@@ -528,6 +527,7 @@ export default class MegamorphicModel extends EmberObject {
 
 MegamorphicModel.prototype.store = null;
 MegamorphicModel.prototype._internalModel = null;
+MegamorphicModel.prototype._recordData = null;
 MegamorphicModel.prototype._parentModel = null;
 MegamorphicModel.prototype._topModel = null;
 MegamorphicModel.prototype._errors = null;

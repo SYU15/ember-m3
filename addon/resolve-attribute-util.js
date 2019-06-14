@@ -135,6 +135,7 @@ function createNestedModel(store, record, recordData, key, nestedValue, parentId
     _internalModel: internalModel,
     _parentModel: record,
     _topModel: record._topModel,
+    _recordData: internalModel._recordData,
   });
   internalModel.record = nestedModel;
 
