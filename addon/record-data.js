@@ -137,6 +137,7 @@ export default class M3RecordData {
     parentRecordData,
     baseRecordData
   ) {
+    this.hiThisISIGOR = true;
     this.modelName = modelName;
     this.clientId = clientId;
     this.id = id;
@@ -401,7 +402,7 @@ export default class M3RecordData {
   }
 
   setIsDeleted(value) {
-    this.isDeleted = value;
+    this._isDeleted = value;
   }
 
   isDeleted() {

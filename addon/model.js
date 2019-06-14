@@ -264,6 +264,8 @@ export default class MegamorphicModel extends EmberObject {
   }
 
   deleteRecord() {
+
+    recordDataFor(this).setIsDeleted(true);
     let newState = get(this, 'isNew') ? deletedSaved : deletedUncommitted;
     this._updateCurrentState(newState);
   }

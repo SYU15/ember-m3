@@ -32,11 +32,17 @@ const STORE_OVERRIDES = {
   },
 
   _relationshipsDefinitionFor: function(modelName) {
-    return Object.create(null);
+    if (get(this, '_schemaManager').includesModel(modelName)) {
+      return Object.create(null);
+    }
+    return this._super(modelName);
   },
 
   _attributesDefinitionFor: function(modelName, id) {
-    return this.recordDataFor(modelName, id).attributesDef();
+    if (get(this, '_schemaManager').includesModel(modelName)) {
+      return this.recordDataFor(modelName, id).attributesDef();
+    }
+    return this._super(modelName);
   },
 
   adapterFor(modelName) {
