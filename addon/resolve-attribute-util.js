@@ -2,7 +2,7 @@ import { dasherize } from '@ember/string';
 import M3ReferenceArray from './m3-reference-array';
 import M3TrackedArray from './m3-tracked-array';
 import { recordDataFor } from './-private';
-import { EmbeddedInternalModel, EmbeddedMegamorphicModel } from './model';
+import { EmbeddedMegamorphicModel } from './model';
 import { A } from '@ember/array';
 
 import {
@@ -122,19 +122,6 @@ function createNestedModel(store, record, recordData, key, nestedValue, parentId
   let modelName = nestedValue.type ? dasherize(nestedValue.type) : null;
 
   let nestedRecordData = recordData._getChildRecordData(key, parentIdx, modelName, nestedValue.id);
-
-  /*
-  let internalModel = new EmbeddedInternalModel({
-    // nested models with ids is pretty misleading; all they really ought to need is type
-    id: nestedValue.id,
-    // maintain consistency with internalmodel.modelName, which is normalized
-    // internally within ember-data
-    modelName: nestedValue.type ? dasherize(nestedValue.type) : null,
-    parentRecord: record,
-    parentKey: key,
-    parentIdx,
-  });
-  */
 
   let nestedModel = EmbeddedMegamorphicModel.create({
     store,

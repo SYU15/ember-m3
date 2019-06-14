@@ -152,7 +152,7 @@ export default class M3RecordData {
 
     // Properties related to child recordDatas
     this._parentRecordData = parentRecordData;
-    this._embeddedInternalModel = null;
+    this._hasEmbeddedModel = false;
     this.__childRecordDatas = null;
     this._schema = schemaManager;
 
@@ -752,7 +752,7 @@ export default class M3RecordData {
    * @param {string} idx
    * @param {string} modelName
    * @param {string} id
-   * @param {EmbeddedInternalModel} embeddedInternalModel
+   * @param {_hasEmbeddedModel} _hasEmbeddedModel
    * @returns {M3RecordData}
    */
   _getChildRecordData(key, idx, modelName, id) {
@@ -784,8 +784,8 @@ export default class M3RecordData {
         );
       }
     }
-    if (!childRecordData._embeddedInternalModel) {
-      childRecordData._embeddedInternalModel = true;
+    if (!childRecordData._hasEmbeddedModel) {
+      childRecordData._hasEmbeddedModel = true;
     }
     return childRecordData;
   }
@@ -1081,7 +1081,7 @@ export default class M3RecordData {
   }
 
   _notifyRecordProperties(changedKeys) {
-    if (this._embeddedInternalModel) {
+    if (this._hasEmbeddedModel) {
       let record = recordDataToRecordMap.get(this);
       // TODO check whether its ok to be missing record
       if (record) {

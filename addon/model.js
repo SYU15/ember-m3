@@ -55,37 +55,6 @@ class EmbeddedSnapshot {
   }
 }
 
-/*
-// TODO: shouldn't need this anymore; this level of indirection for nested recordData isn't useful
-export class EmbeddedInternalModel {
-  constructor({ id, modelName, parentRecord, parentKey, parentIdx }) {
-    this.id = id;
-    this.modelName = modelName;
-
-    let parentRecordData = parentRecord._recordData;
-    let recordData = parentRecordData._getChildRecordData(
-      parentKey,
-      parentIdx,
-      modelName,
-      id,
-      this
-    );
-
-    this._recordData = recordData;
-
-    if (!IS_RECORD_DATA) {
-      this._modelData = recordData;
-    }
-
-    this.record = null;
-  }
-
-  createSnapshot() {
-    return new EmbeddedSnapshot(this.record);
-  }
-}
-*/
-
 class YesManAttributesSingletonClass {
   has() {
     return true;
