@@ -56,16 +56,11 @@ class EmbeddedSnapshot {
 
 // TODO: shouldn't need this anymore; this level of indirection for nested recordData isn't useful
 export class EmbeddedInternalModel {
-  constructor({ id, modelName, parentInternalModel, parentKey, parentIdx }) {
+  constructor({ id, modelName, parentRecord, parentKey, parentIdx }) {
     this.id = id;
     this.modelName = modelName;
 
-    let parentRecordData;
-    if (!IS_RECORD_DATA) {
-      parentRecordData = parentInternalModel._modelData;
-    } else {
-      parentRecordData = parentInternalModel._recordData;
-    }
+    let parentRecordData = parentRecord._recordData;
     let recordData = parentRecordData._getChildRecordData(
       parentKey,
       parentIdx,
@@ -78,8 +73,6 @@ export class EmbeddedInternalModel {
     if (!IS_RECORD_DATA) {
       this._modelData = recordData;
     }
-
-    this.parentInternalModel = parentInternalModel;
 
     this.record = null;
   }
@@ -209,7 +202,7 @@ export default class MegamorphicModel extends EmberObject {
   }
 
   get _modelName() {
-    return this._internalModel.modelName;
+    return this._recordData.modelName;
   }
 
   __defineNonEnumerable(property) {
@@ -384,7 +377,10 @@ export default class MegamorphicModel extends EmberObject {
   }
 
   get id() {
-    return this._internalModel.id;
+    if (!this._recordData) {
+      return null;
+    }
+    return this._recordData.id;
   }
 
   set id(value) {

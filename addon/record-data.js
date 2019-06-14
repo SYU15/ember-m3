@@ -137,7 +137,6 @@ export default class M3RecordData {
     parentRecordData,
     baseRecordData
   ) {
-    this.hiThisISIGOR = true;
     this.modelName = modelName;
     this.clientId = clientId;
     this.id = id;
@@ -161,7 +160,7 @@ export default class M3RecordData {
     // Properties related to projections
     this._baseRecordData = baseRecordData;
     this._projections = null;
-    this._recordArrays = new Set(); 
+    this._recordArrays = new Set();
 
     this._initBaseRecordData();
   }
@@ -485,7 +484,7 @@ export default class M3RecordData {
   }
 
   removeFromRecordArrays() {
-    this._recordArrays.forEach((recordArray) => {
+    this._recordArrays.forEach(recordArray => {
       recordArray._removeRecordData(this);
     });
   }

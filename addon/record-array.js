@@ -111,6 +111,7 @@ export default class M3RecordArray extends ArrayProxy {
   }
 
   _registerWithInternalModels(internalModels) {
+    debugger;
     for (let i = 0, l = internalModels.length; i < l; i++) {
       let internalModel = internalModels[i];
 

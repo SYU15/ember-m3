@@ -125,7 +125,7 @@ function createNestedModel(store, record, recordData, key, nestedValue, parentId
     // maintain consistency with internalmodel.modelName, which is normalized
     // internally within ember-data
     modelName: nestedValue.type ? dasherize(nestedValue.type) : null,
-    parentInternalModel: record._internalModel,
+    parentRecord: record,
     parentKey: key,
     parentIdx,
   });
