@@ -5,6 +5,7 @@ import { copy } from './utils/copy';
 import { assert } from '@ember/debug';
 import Ember from 'ember';
 import { IS_RECORD_DATA } from 'ember-compatibility-helpers';
+import { recordDataToRecordMap } from './initializers/m3-store';
 
 const emberAssign = assign || merge;
 
@@ -754,7 +755,7 @@ export default class M3RecordData {
    * @param {EmbeddedInternalModel} embeddedInternalModel
    * @returns {M3RecordData}
    */
-  _getChildRecordData(key, idx, modelName, id, embeddedInternalModel) {
+  _getChildRecordData(key, idx, modelName, id) {
     let childRecordData;
 
     if (idx !== undefined && idx !== null) {
@@ -784,7 +785,7 @@ export default class M3RecordData {
       }
     }
     if (!childRecordData._embeddedInternalModel) {
-      childRecordData._embeddedInternalModel = embeddedInternalModel;
+      childRecordData._embeddedInternalModel = true;
     }
     return childRecordData;
   }
@@ -1081,7 +1082,11 @@ export default class M3RecordData {
 
   _notifyRecordProperties(changedKeys) {
     if (this._embeddedInternalModel) {
-      this._embeddedInternalModel.record._notifyProperties(changedKeys);
+      let record = recordDataToRecordMap.get(this);
+      // TODO check whether its ok to be missing record
+      if (record) {
+        record._notifyProperties(changedKeys);
+      }
     } else if (!this._parentRecordData) {
       // only notify through the store if it is not a child recordData
       notifyProperties(this.storeWrapper, this.modelName, this.id, this.clientId, changedKeys);

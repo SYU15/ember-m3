@@ -8,6 +8,7 @@ import { isArray } from '@ember/array';
 import { assert, warn } from '@ember/debug';
 import { readOnly } from '@ember/object/computed';
 import { IS_RECORD_DATA } from 'ember-compatibility-helpers';
+import { recordDataToRecordMap } from './initializers/m3-store';
 
 import { recordDataFor } from './-private';
 import M3RecordArray from './record-array';
@@ -54,6 +55,7 @@ class EmbeddedSnapshot {
   }
 }
 
+/*
 // TODO: shouldn't need this anymore; this level of indirection for nested recordData isn't useful
 export class EmbeddedInternalModel {
   constructor({ id, modelName, parentRecord, parentKey, parentIdx }) {
@@ -68,6 +70,7 @@ export class EmbeddedInternalModel {
       id,
       this
     );
+
     this._recordData = recordData;
 
     if (!IS_RECORD_DATA) {
@@ -81,6 +84,7 @@ export class EmbeddedInternalModel {
     return new EmbeddedSnapshot(this.record);
   }
 }
+*/
 
 class YesManAttributesSingletonClass {
   has() {
@@ -139,6 +143,7 @@ export default class MegamorphicModel extends EmberObject {
   init(properties) {
     // Drop Ember.Object subclassing instead
     super.init(...arguments);
+    recordDataToRecordMap.set(properties._recordData, this);
     this._store = properties.store;
     this._recordData = properties._recordData;
     this._internalModel = properties._internalModel;
@@ -495,6 +500,7 @@ export default class MegamorphicModel extends EmberObject {
     // Remove errors for the property
     this._errors.remove(key);
     if (
+      this._internalModel &&
       this._internalModel.currentState &&
       !this._internalModel.currentState.isValid &&
       get(this._errors, 'length') === 0

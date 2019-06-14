@@ -1295,7 +1295,7 @@ module('unit/model', function(hooks) {
     });
 
     assert.equal(
-      get(model, 'nextChapter._internalModel.modelName'),
+      get(model, 'nextChapter._recordData.modelName'),
       'com.example.bookstore.chapter',
       'nested models have normalized model names'
     );

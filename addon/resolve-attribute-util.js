@@ -119,6 +119,11 @@ function createNestedModel(store, record, recordData, key, nestedValue, parentId
     return nestedValue;
   }
 
+  let modelName = nestedValue.type ? dasherize(nestedValue.type) : null;
+
+  let nestedRecordData = recordData._getChildRecordData(key, parentIdx, modelName, nestedValue.id);
+
+  /*
   let internalModel = new EmbeddedInternalModel({
     // nested models with ids is pretty misleading; all they really ought to need is type
     id: nestedValue.id,
@@ -129,17 +134,14 @@ function createNestedModel(store, record, recordData, key, nestedValue, parentId
     parentKey: key,
     parentIdx,
   });
+  */
 
   let nestedModel = EmbeddedMegamorphicModel.create({
     store,
-    _internalModel: internalModel,
     _parentModel: record,
     _topModel: record._topModel,
-    _recordData: internalModel._recordData,
+    _recordData: nestedRecordData,
   });
-  internalModel.record = nestedModel;
-
-  let nestedRecordData = recordDataFor(nestedModel);
 
   if (
     !recordData.getServerAttr ||

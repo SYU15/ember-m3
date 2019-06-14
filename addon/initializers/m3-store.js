@@ -9,6 +9,8 @@ import MegamorphicModelFactory from '../factory';
 import QueryCache from '../query-cache';
 import { flushChanges } from '../utils/notify-changes';
 
+export let recordDataToRecordMap = new WeakMap();
+
 const STORE_OVERRIDES = {
   _schemaManager: inject('m3-schema-manager'),
 
@@ -16,6 +18,7 @@ const STORE_OVERRIDES = {
     this._super(...arguments);
     this._queryCache = new QueryCache({ store: this });
     this._globalM3Cache = new Object(null);
+    this._recordDataToRecordMap = recordDataToRecordMap;
   },
 
   // Store hooks necessary for using a single model class
@@ -64,7 +67,9 @@ const STORE_OVERRIDES = {
     if (get(this, '_schemaManager').includesModel(modelName)) {
       delete createOptions.container;
       createOptions._recordData = recordData;
-      return new MegamorphicModel(createOptions);
+      let model = new MegamorphicModel(createOptions);
+      //recordDataToRecordMap.set(recordData, model);
+      return model;
     }
     return this._super(modelName, createOptions);
   },
