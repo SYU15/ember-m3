@@ -12,6 +12,7 @@ export default Route.extend({
 
   actions: {
     updateData() {
+      debugger;
       let vol = this.invocation++ === 0 ? 'I' : Math.random();
 
       this.store.pushPayload('com.example.bookstore.book', {

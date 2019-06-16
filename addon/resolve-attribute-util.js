@@ -9,14 +9,15 @@ import {
   computeAttributeReference,
   computeNestedModel,
   resolveReferencesWithInternalModels,
+  getOrCreateRecordFromRD,
 } from './utils/resolve';
 
 function resolveReference(store, reference) {
   if (reference.type === null) {
     // for schemas with a global id-space but multiple types, schemas may
     // report a type of null
-    let internalModel = store._globalM3Cache[reference.id];
-    return internalModel ? internalModel.getRecord() : null;
+    let rd = store._globalM3CacheRD[reference.id];
+    return rd ? getOrCreateRecordFromRD(rd, store) : null;
   } else {
     // respect the user schema's type if provided
     return store.peekRecord(reference.type, reference.id);

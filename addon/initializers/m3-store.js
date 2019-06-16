@@ -137,6 +137,7 @@ const STORE_OVERRIDES = {
   _pushInternalModel(jsonAPIResource) {
     let internalModel = this._super(jsonAPIResource);
     if (get(this, '_schemaManager').includesModel(jsonAPIResource.type)) {
+      debugger;
       this._globalM3Cache[internalModel.id] = internalModel;
     }
     return internalModel;
@@ -151,7 +152,16 @@ const STORE_OVERRIDES = {
 function createRecordDataFor(modelName, id, clientId, storeWrapper) {
   let schemaManager = get(this, '_schemaManager');
   if (schemaManager.includesModel(modelName)) {
-    return new M3RecordData(modelName, id, clientId, storeWrapper, schemaManager, null, null, this._globalM3CacheRD);
+    return new M3RecordData(
+      modelName,
+      id,
+      clientId,
+      storeWrapper,
+      schemaManager,
+      null,
+      null,
+      this._globalM3CacheRD
+    );
   }
 
   return this._super(modelName, id, clientId, storeWrapper);

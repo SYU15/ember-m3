@@ -1,7 +1,6 @@
 import { dasherize } from '@ember/string';
 import { recordDataToRecordMap } from '../initializers/m3-store';
 
-
 export function computeAttributeReference(key, value, modelName, schemaInterface, schema) {
   schemaInterface._beginDependentKeyResolution(key);
   let reference = schema.computeAttributeReference(key, value, modelName, schemaInterface);
@@ -23,23 +22,21 @@ export function resolveReferencesWithInternalModels(store, references) {
     } else {
       let rd = store._globalM3CacheRD[reference.id];
       if (rd) {
-        let record = recordDataToRecordMap.get(rd);
-        if (recordDataToRecordMap.get(rd)) {
-          return record;
-        } else {
-          return store.instantiateRecord(rd.modelName, { store }, rd);
-        }
+        return getOrCreateRecordFromRD(rd, store);
       }
-      /*
-      let im = store._globalM3Cache[reference.id];
-      if (im) {
-        return im.getRecord();
-      }
-      */
     }
   });
 }
 
 export function isResolvedValue(value) {
   return value && value.constructor && (value.constructor.isModel || value.constructor.isM3Model);
+}
+
+export function getOrCreateRecordFromRD(rd, store) {
+  let record = recordDataToRecordMap.get(rd);
+  if (recordDataToRecordMap.get(rd)) {
+    return record;
+  } else {
+    return store.peekRecord(rd.modelName, rd.id);
+  }
 }

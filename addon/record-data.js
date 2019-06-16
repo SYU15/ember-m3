@@ -196,6 +196,12 @@ export default class M3RecordData {
     notifyRecord = false,
     suppressProjectionNotifications = false
   ) {
+    //debugger
+    /*
+    if (!notifyRecord && recordDataToRecordMap.get(this)) {
+      notifyRecord = true;
+    }
+    */
     if (this._baseRecordData) {
       this._baseRecordData.pushData(
         jsonApiResource,
@@ -227,6 +233,8 @@ export default class M3RecordData {
       // TODO Which cases do we need to initialize the id here?
       this.id = jsonApiResource.id + '';
     }
+
+    this.globalM3CacheRD[this.id] = this;
 
     // by default, always notify projections when we receive data.  We might
     // not have been asked to calculate changes if the base record data has
@@ -288,6 +296,7 @@ export default class M3RecordData {
     if (jsonApiResource && jsonApiResource.id) {
       this.id = '' + jsonApiResource.id;
     }
+    this.globalM3CacheRD[this.id] = this;
     if (!this._parentRecordData) {
       // only set the record ID if it is a top-level recordData
       this.storeWrapper.setRecordId(this.modelName, this.id, this.clientId);
