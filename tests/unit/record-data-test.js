@@ -16,6 +16,7 @@ module('unit/record-data', function(hooks) {
   hooks.beforeEach(function() {
     this.sinon = sinon.createSandbox();
 
+    let globalCache = new Object(null);
     this.owner.register(
       'service:m3-schema',
       class TestSchema extends DefaultSchema {
@@ -52,7 +53,10 @@ module('unit/record-data', function(hooks) {
             id,
             clientId,
             storeWrapper,
-            schemaManager
+            schemaManager,
+            null,
+            null,
+            globalCache
           ))
         );
       },
@@ -90,7 +94,8 @@ module('unit/record-data', function(hooks) {
       this.storeWrapper,
       this.schemaManager,
       null,
-      null
+      null,
+      {}
     );
 
     recordData.pushData(
@@ -121,7 +126,8 @@ module('unit/record-data', function(hooks) {
       this.storeWrapper,
       this.schemaManager,
       null,
-      null
+      null,
+      {}
     );
 
     recordData.pushData(
@@ -159,7 +165,8 @@ module('unit/record-data', function(hooks) {
       this.storeWrapper,
       this.schemaManager,
       null,
-      null
+      null,
+      {}
     );
 
     assert.strictEqual(topRecordData._parentRecordData, null, 'top recordData has no parent');
@@ -231,7 +238,8 @@ module('unit/record-data', function(hooks) {
       this.storeWrapper,
       this.schemaManager,
       null,
-      null
+      null,
+      {}
     );
     recordData.rollbackAttributes(true);
     assert.equal(rollbackAttributesSpy.getCalls().length, 0, 'rollbackAttributes was not called');
@@ -599,7 +607,8 @@ module('unit/record-data', function(hooks) {
       this.storeWrapper,
       this.schemaManager,
       null,
-      null
+      null,
+      {}
     );
 
     recordData.pushData(
@@ -699,7 +708,8 @@ module('unit/record-data', function(hooks) {
         this.storeWrapper,
         this.schemaManager,
         null,
-        null
+        null,
+        {}
       );
 
       this.topRecordData.pushData({

@@ -136,13 +136,15 @@ export default class M3RecordData {
     storeWrapper,
     schemaManager,
     parentRecordData,
-    baseRecordData
+    baseRecordData,
+    globalM3CacheRD
   ) {
     this.modelName = modelName;
     this.clientId = clientId;
     this.id = id;
     this.storeWrapper = storeWrapper;
-
+    this.globalM3CacheRD = globalM3CacheRD;
+    this.globalM3CacheRD[this.id] = this;
     this.isDestroyed = false;
     this._data = null;
     this._attributes = null;
@@ -479,6 +481,7 @@ export default class M3RecordData {
   }
 
   unloadRecord() {
+    delete this.globalM3CacheRD[this.id];
     if (this.isDestroyed) {
       return;
     }
@@ -829,7 +832,8 @@ export default class M3RecordData {
       this.storeWrapper,
       this._schema,
       this,
-      baseChildRecordData
+      baseChildRecordData,
+      this.globalM3CacheRD
     );
   }
 

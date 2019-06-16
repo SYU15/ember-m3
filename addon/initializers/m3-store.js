@@ -21,6 +21,7 @@ const STORE_OVERRIDES = {
     let queryCache;
     this._queryCache = new QueryCache({ store: this });
     this._globalM3Cache = new Object(null);
+    this._globalM3CacheRD = new Object(null);
     this._recordDataToRecordMap = recordDataToRecordMap;
   },
 
@@ -66,7 +67,6 @@ const STORE_OVERRIDES = {
   },
 
   instantiateRecord(modelName, createOptions, recordData) {
-    debugger;
     recordDataToQueryCache.set(recordData, this._queryCache);
     // TODO NOW deal with this
     if (get(this, '_schemaManager').includesModel(modelName)) {
@@ -151,7 +151,7 @@ const STORE_OVERRIDES = {
 function createRecordDataFor(modelName, id, clientId, storeWrapper) {
   let schemaManager = get(this, '_schemaManager');
   if (schemaManager.includesModel(modelName)) {
-    return new M3RecordData(modelName, id, clientId, storeWrapper, schemaManager, null, null);
+    return new M3RecordData(modelName, id, clientId, storeWrapper, schemaManager, null, null, this._globalM3CacheRD);
   }
 
   return this._super(modelName, id, clientId, storeWrapper);
