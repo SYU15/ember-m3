@@ -2,7 +2,7 @@
 /* eslint-disable ember/no-attrs-in-components */
 
 import DS from 'ember-data';
-import { RootState } from 'ember-data/-private';
+import { RootState, identifierForModel } from 'ember-data/-private';
 import EmberObject, { computed, get, set, defineProperty } from '@ember/object';
 import { isArray } from '@ember/array';
 import { assert, warn } from '@ember/debug';
@@ -68,10 +68,6 @@ class YesManAttributesSingletonClass {
 }
 
 const YesManAttributes = new YesManAttributesSingletonClass();
-
-const retrieveFromCurrentState = computed('_topModel.currentState', function(key) {
-  return this._topModel._internalModel.currentState[key];
-}).readOnly();
 
 // global buffer for initial properties to work around
 //  a)  can't write to `this` before `super`
@@ -162,17 +158,6 @@ export default class MegamorphicModel extends EmberObject {
     }
   }
 
-  _updateCurrentState(state) {
-    if (this !== this._topModel) {
-      this._topModel._updateCurrentState(state);
-      return;
-    }
-    this._internalModel.currentState = state;
-    // currentState is defined on the prototype and will be treated as
-    // non-volatile, so it's safe to eagerly send a change event
-    notifyPropertyChange(this, 'currentState');
-  }
-
   notifyPropertyChange(key) {
     if (!this._schema.isAttributeIncluded(this._modelName, key)) {
       return;
@@ -260,8 +245,6 @@ export default class MegamorphicModel extends EmberObject {
 
   deleteRecord() {
     recordDataFor(this).setIsDeleted(true);
-    let newState = get(this, 'isNew') ? deletedSaved : deletedUncommitted;
-    this._updateCurrentState(newState);
   }
 
   destroyRecord(options) {
@@ -276,7 +259,6 @@ export default class MegamorphicModel extends EmberObject {
     }
 
     let dirtyKeys = recordDataFor(this).rollbackAttributes();
-    this._updateCurrentState(loadedSaved);
 
     if (dirtyKeys && dirtyKeys.length > 0) {
       this._notifyProperties(dirtyKeys);
@@ -433,22 +415,26 @@ export default class MegamorphicModel extends EmberObject {
 
     const isDirty = recordData.isAttrDirty(attr);
 
+    /*
     if (isDirty && !this.get('isDirty')) {
       this._updateCurrentState(updatedUncommitted);
     }
+    */
   }
 
   _removeError(key) {
     // Remove errors for the property
     this._errors.remove(key);
+    /*
     if (
-      this._internalModel &&
-      this._internalModel.currentState &&
-      !this._internalModel.currentState.isValid &&
+      this._im &&
+      this._im.currentState &&
+      !this._im.currentState.isValid &&
       get(this._errors, 'length') === 0
     ) {
       this._updateCurrentState(updatedUncommitted);
     }
+    */
   }
 
   static toString() {
@@ -523,14 +509,16 @@ const isNew = computed(function() {
   return this._recordData.isNew();
 }).volatile();
 
+const isSaving = computed(function() {
+  debugger;
+  let requests = this.store.requestCache.getPending(identifierForModel(this));
+  return !!requests.find(req => req.request.data.op === 'saveRecord');
+}).volatile();
+
 // STATE PROPS
 /*
 defineProperty(MegamorphicModel.prototype, 'isLoading', retrieveFromCurrentState);
 defineProperty(MegamorphicModel.prototype, 'isLoaded', retrieveFromCurrentState);
-defineProperty(MegamorphicModel.prototype, 'isSaving', retrieveFromCurrentState);
-defineProperty(MegamorphicModel.prototype, 'isDeleted', retrieveFromCurrentState);
-defineProperty(MegamorphicModel.prototype, 'isNew', retrieveFromCurrentState);
-defineProperty(MegamorphicModel.prototype, 'isDirty', retrieveFromCurrentState);
 defineProperty(MegamorphicModel.prototype, 'dirtyType', retrieveFromCurrentState);
 */
 
@@ -545,6 +533,7 @@ defineProperty(
 defineProperty(MegamorphicModel.prototype, 'isValid', isValid);
 defineProperty(MegamorphicModel.prototype, 'isDeleted', isDeleted);
 defineProperty(MegamorphicModel.prototype, 'isNew', isNew);
+defineProperty(MegamorphicModel.prototype, 'isSaving', isSaving);
 
 export class EmbeddedMegamorphicModel extends MegamorphicModel {
   save() {
