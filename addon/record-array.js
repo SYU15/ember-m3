@@ -47,12 +47,7 @@ export default class M3RecordArray extends ArrayProxy {
   }
 
   objectAtContent(idx) {
-    /*
-    let internalModel = this.content[idx];
-    return internalModel !== null && internalModel !== undefined
-      ? internalModel.getRecord()
-      : undefined;
-      */
+    // TODO make this lazy again
     let record = this.content[idx];
     return record;
   }
@@ -76,13 +71,13 @@ export default class M3RecordArray extends ArrayProxy {
       this.content.removeObjects(objects);
     } else {
       for (let i = 0; i < objects.length; ++i) {
-        let internalModel = objects[i];
+        let object = objects[i];
 
         for (let j = 0; j < this.content.length; ++j) {
           let { id, type } = this.content[j];
           let dtype = type && dasherize(type);
 
-          if ((dtype === null || dtype === internalModel.modelName) && id === internalModel.id) {
+          if ((dtype === null || dtype === object.modelName) && id === object.id) {
             this.content.removeAt(j);
             break;
           }
@@ -131,12 +126,12 @@ export default class M3RecordArray extends ArrayProxy {
     //debugger;
     /*
     for (let i = 0, l = objects.length; i < l; i++) {
-      let internalModel = objects[i];
+      let object = objects[i];
 
       // allow refs to point to resources not in the store
       // TODO: instead add a schema missing ref hook; #254
-      if (internalModel !== null && internalModel !== undefined) {
-        internalModel._recordArrays.add(this);
+      if (object !== null && object !== undefined) {
+        object._recordArrays.add(this);
       }
     }
     */
