@@ -8,7 +8,7 @@ import { A } from '@ember/array';
 import {
   computeAttributeReference,
   computeNestedModel,
-  resolveReferencesWithInternalModels,
+  resolveReferencesWithRecords,
   getOrCreateRecordFromRD,
 } from './utils/resolve';
 
@@ -44,7 +44,7 @@ export function resolveRecordArray(store, record, key, references) {
     record,
   });
 
-  let internalModels = resolveReferencesWithInternalModels(store, references);
+  let internalModels = resolveReferencesWithRecords(store, references);
 
   array._setObjects(internalModels);
   return array;

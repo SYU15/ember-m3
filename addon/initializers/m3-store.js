@@ -18,14 +18,12 @@ const STORE_OVERRIDES = {
 
   init() {
     this._super(...arguments);
-    let queryCache;
     this._queryCache = new QueryCache({ store: this });
     this._globalM3CacheRD = new Object(null);
     this._recordDataToRecordMap = recordDataToRecordMap;
   },
 
   // Store hooks necessary for using a single model class
-
   _hasModelFor(modelName) {
     return get(this, '_schemaManager').includesModel(modelName) || this._super(modelName);
   },
@@ -129,8 +127,7 @@ const STORE_OVERRIDES = {
     flushChanges(this);
     return result;
   },
-
- };
+};
 
 function createRecordDataFor(modelName, id, clientId, storeWrapper) {
   let schemaManager = get(this, '_schemaManager');

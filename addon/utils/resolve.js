@@ -15,7 +15,7 @@ export function computeNestedModel(key, value, modelName, schemaInterface, schem
   return nestedModel;
 }
 
-export function resolveReferencesWithInternalModels(store, references) {
+export function resolveReferencesWithRecords(store, references) {
   return references.map(reference => {
     if (reference.type) {
       return store.peekRecord(dasherize(reference.type), reference.id);

@@ -3,7 +3,7 @@ import { dasherize } from '@ember/string';
 import ArrayProxy from '@ember/array/proxy';
 import { A } from '@ember/array';
 import { EmbeddedMegamorphicModel } from './model';
-import { resolveReferencesWithInternalModels } from './utils/resolve';
+import { resolveReferencesWithRecords } from './utils/resolve';
 
 /**
  * M3RecordArray
@@ -149,7 +149,7 @@ export default class M3RecordArray extends ArrayProxy {
     }
 
     if (this._references !== null) {
-      let objects = resolveReferencesWithInternalModels(this.store, this._references);
+      let objects = resolveReferencesWithRecords(this.store, this._references);
       this._setObjects(objects, false);
     }
 
