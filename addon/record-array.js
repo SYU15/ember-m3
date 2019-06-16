@@ -30,13 +30,14 @@ export default class M3RecordArray extends ArrayProxy {
   }
 
   replaceContent(idx, removeAmt, newRecords) {
+    //debugger
     let addAmt = get(newRecords, 'length');
     let newInternalModels = new Array(addAmt);
 
     if (addAmt > 0) {
       let _newRecords = A(newRecords);
       for (let i = 0; i < newInternalModels.length; ++i) {
-        newInternalModels[i] = _newRecords.objectAt(i)._internalModel;
+        newInternalModels[i] = _newRecords.objectAt(i);
       }
     }
 
@@ -46,10 +47,14 @@ export default class M3RecordArray extends ArrayProxy {
   }
 
   objectAtContent(idx) {
+    /*
     let internalModel = this.content[idx];
     return internalModel !== null && internalModel !== undefined
       ? internalModel.getRecord()
       : undefined;
+      */
+    let record = this.content[idx];
+    return record;
   }
 
   objectAt(idx) {
@@ -60,11 +65,13 @@ export default class M3RecordArray extends ArrayProxy {
   // RecordArrayManager private api
 
   _pushInternalModels(internalModels) {
+    //debugger
     this._resolve();
     this.content.pushObjects(internalModels);
   }
 
   _removeInternalModels(internalModels) {
+    //debugger
     if (this._resolved) {
       this.content.removeObjects(internalModels);
     } else {
@@ -110,8 +117,19 @@ export default class M3RecordArray extends ArrayProxy {
     this.content.setObjects(this._references);
   }
 
-  _registerWithInternalModels(internalModels) {
-    debugger;
+  _removeRecordData(recordData) {
+    for (let i = this.content.length; i >= 0; --i) {
+      let item = this.content.objectAt(i);
+      if (item && recordData === item._recordData) {
+        this.content.removeAt(i);
+        break;
+      }
+    }
+  }
+
+  _registerWithInternalModels(records) {
+    //debugger;
+    /*
     for (let i = 0, l = internalModels.length; i < l; i++) {
       let internalModel = internalModels[i];
 
@@ -121,6 +139,8 @@ export default class M3RecordArray extends ArrayProxy {
         internalModel._recordArrays.add(this);
       }
     }
+    */
+    records.forEach(record => record && record._recordData._recordArrays.add(this));
   }
 
   _resolve() {
