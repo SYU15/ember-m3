@@ -196,12 +196,6 @@ export default class M3RecordData {
     notifyRecord = false,
     suppressProjectionNotifications = false
   ) {
-    //debugger
-    /*
-    if (!notifyRecord && recordDataToRecordMap.get(this)) {
-      notifyRecord = true;
-    }
-    */
     if (this._baseRecordData) {
       this._baseRecordData.pushData(
         jsonApiResource,

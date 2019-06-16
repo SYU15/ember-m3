@@ -73,33 +73,6 @@ const retrieveFromCurrentState = computed('_topModel.currentState', function(key
   return this._topModel._internalModel.currentState[key];
 }).readOnly();
 
-/**
-    If this property is `true` the record is in the `valid` state.
-
-    A record will be in the `valid` state when the adapter did not report any
-    server-side validation failures.
-
-    @property isValid
-    @type {Boolean}
-    @readOnly
-  */
-const isValid = computed(function() {
-  if (this.get('errors.length') > 0) {
-    return false;
-  }
-
-  let invalidRequest = this._getInvalidRequest();
-  if (!invalidRequest) {
-    return true;
-  } else {
-    if (this._getInvalidRequestsToIgnore().get(invalidRequest)) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-}).volatile();
-
 // global buffer for initial properties to work around
 //  a)  can't write to `this` before `super`
 //  b)  core_object writes properties before calling `init`; this means that no
@@ -505,16 +478,73 @@ MegamorphicModel.prototype.adapterError = null;
 
 MegamorphicModel.relationshipsByName = new Map();
 
+/**
+    If this property is `true` the record is in the `valid` state.
+
+    A record will be in the `valid` state when the adapter did not report any
+    server-side validation failures.
+
+    @property isValid
+    @type {Boolean}
+    @readOnly
+  */
+const isValid = computed(function() {
+  if (this.get('errors.length') > 0) {
+    return false;
+  }
+
+  let invalidRequest = this._getInvalidRequest();
+  if (!invalidRequest) {
+    return true;
+  } else {
+    if (this._getInvalidRequestsToIgnore().get(invalidRequest)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+}).volatile();
+
+/**
+ */
+const isDirty = computed(function() {
+  return (
+    this._recordData.hasChangedAttributes() ||
+    this._recordData.isNew() ||
+    this._recordData.isDeleted()
+  );
+}).volatile();
+
+const isDeleted = computed(function() {
+  return this._recordData.isDeleted();
+}).volatile();
+
+const isNew = computed(function() {
+  return this._recordData.isNew();
+}).volatile();
+
 // STATE PROPS
-defineProperty(MegamorphicModel.prototype, 'isEmpty', retrieveFromCurrentState);
+/*
 defineProperty(MegamorphicModel.prototype, 'isLoading', retrieveFromCurrentState);
 defineProperty(MegamorphicModel.prototype, 'isLoaded', retrieveFromCurrentState);
 defineProperty(MegamorphicModel.prototype, 'isSaving', retrieveFromCurrentState);
 defineProperty(MegamorphicModel.prototype, 'isDeleted', retrieveFromCurrentState);
 defineProperty(MegamorphicModel.prototype, 'isNew', retrieveFromCurrentState);
-defineProperty(MegamorphicModel.prototype, 'isValid', isValid);
 defineProperty(MegamorphicModel.prototype, 'isDirty', retrieveFromCurrentState);
 defineProperty(MegamorphicModel.prototype, 'dirtyType', retrieveFromCurrentState);
+*/
+
+defineProperty(MegamorphicModel.prototype, 'isDirty', isDirty);
+defineProperty(
+  MegamorphicModel.prototype,
+  'isEmpty',
+  computed(function() {
+    return false;
+  })
+);
+defineProperty(MegamorphicModel.prototype, 'isValid', isValid);
+defineProperty(MegamorphicModel.prototype, 'isDeleted', isDeleted);
+defineProperty(MegamorphicModel.prototype, 'isNew', isNew);
 
 export class EmbeddedMegamorphicModel extends MegamorphicModel {
   save() {
