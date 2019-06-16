@@ -95,7 +95,7 @@ module('unit/store', function(hooks) {
     assert.equal(this.store.hasRecordForId('author', 'author:1'), true);
 
     assert.deepEqual(
-      Object.keys(this.store._globalM3Cache).sort(),
+      Object.keys(this.store._globalM3CacheRD).sort(),
       [
         'isbn:9780439064873',
         'isbn:9780439708180',
@@ -110,7 +110,7 @@ module('unit/store', function(hooks) {
     );
 
     assert.deepEqual(
-      Object.keys(this.store._globalM3Cache).sort(),
+      Object.keys(this.store._globalM3CacheRD).sort(),
       ['isbn:9780439064873', 'isbn:9780439708180/chapter/1', 'isbn:9780439708180/chapter/2'],
       'global cache can unload records'
     );

@@ -131,23 +131,7 @@ const STORE_OVERRIDES = {
     return result;
   },
 
-  // These two hooks are used for the secondary cache
-  // TODO: make secondary caches possible via public API
-
-  _pushInternalModel(jsonAPIResource) {
-    let internalModel = this._super(jsonAPIResource);
-    if (get(this, '_schemaManager').includesModel(jsonAPIResource.type)) {
-      debugger;
-      this._globalM3Cache[internalModel.id] = internalModel;
-    }
-    return internalModel;
-  },
-
-  _removeFromIdMap(internalModel) {
-    delete this._globalM3Cache[internalModel.id];
-    return this._super(internalModel);
-  },
-};
+ };
 
 function createRecordDataFor(modelName, id, clientId, storeWrapper) {
   let schemaManager = get(this, '_schemaManager');
