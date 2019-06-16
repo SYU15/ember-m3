@@ -20,7 +20,7 @@ export default class M3RecordArray extends ArrayProxy {
     this.content = A();
     super.init(...arguments);
     this._references = [];
-    this._internalModels = [];
+    this._objects = [];
     this._resolved = false;
     this.store = this.store || null;
   }
@@ -32,17 +32,17 @@ export default class M3RecordArray extends ArrayProxy {
   replaceContent(idx, removeAmt, newRecords) {
     //debugger
     let addAmt = get(newRecords, 'length');
-    let newInternalModels = new Array(addAmt);
+    let newObjects = new Array(addAmt);
 
     if (addAmt > 0) {
       let _newRecords = A(newRecords);
-      for (let i = 0; i < newInternalModels.length; ++i) {
-        newInternalModels[i] = _newRecords.objectAt(i);
+      for (let i = 0; i < newObjects.length; ++i) {
+        newObjects[i] = _newRecords.objectAt(i);
       }
     }
 
-    this.content.replace(idx, removeAmt, newInternalModels);
-    this._registerWithInternalModels(newInternalModels);
+    this.content.replace(idx, removeAmt, newObjects);
+    this._registerWithObjects(newObjects);
     this._resolved = true;
   }
 
@@ -64,19 +64,19 @@ export default class M3RecordArray extends ArrayProxy {
 
   // RecordArrayManager private api
 
-  _pushInternalModels(internalModels) {
+  _pushObjects(objects) {
     //debugger
     this._resolve();
-    this.content.pushObjects(internalModels);
+    this.content.pushObjects(objects);
   }
 
-  _removeInternalModels(internalModels) {
+  _removeObjects(objects) {
     //debugger
     if (this._resolved) {
-      this.content.removeObjects(internalModels);
+      this.content.removeObjects(objects);
     } else {
-      for (let i = 0; i < internalModels.length; ++i) {
-        let internalModel = internalModels[i];
+      for (let i = 0; i < objects.length; ++i) {
+        let internalModel = objects[i];
 
         for (let j = 0; j < this.content.length; ++j) {
           let { id, type } = this.content[j];
@@ -93,11 +93,11 @@ export default class M3RecordArray extends ArrayProxy {
 
   // Private API
 
-  _setInternalModels(internalModels, triggerChange = true) {
+  _setObjects(objects, triggerChange = true) {
     if (triggerChange) {
-      this.content.replace(0, this.content.length, internalModels);
+      this.content.replace(0, this.content.length, objects);
     } else {
-      this.content.splice(0, this.content.length, ...internalModels);
+      this.content.splice(0, this.content.length, ...objects);
     }
 
     this.setProperties({
@@ -105,7 +105,7 @@ export default class M3RecordArray extends ArrayProxy {
       isUpdating: false,
     });
 
-    this._registerWithInternalModels(internalModels);
+    this._registerWithObjects(objects);
     this._resolved = true;
   }
 
@@ -127,11 +127,11 @@ export default class M3RecordArray extends ArrayProxy {
     }
   }
 
-  _registerWithInternalModels(records) {
+  _registerWithObjects(records) {
     //debugger;
     /*
-    for (let i = 0, l = internalModels.length; i < l; i++) {
-      let internalModel = internalModels[i];
+    for (let i = 0, l = objects.length; i < l; i++) {
+      let internalModel = objects[i];
 
       // allow refs to point to resources not in the store
       // TODO: instead add a schema missing ref hook; #254
@@ -149,8 +149,8 @@ export default class M3RecordArray extends ArrayProxy {
     }
 
     if (this._references !== null) {
-      let internalModels = resolveReferencesWithInternalModels(this.store, this._references);
-      this._setInternalModels(internalModels, false);
+      let objects = resolveReferencesWithInternalModels(this.store, this._references);
+      this._setObjects(objects, false);
     }
 
     this._resolved = true;

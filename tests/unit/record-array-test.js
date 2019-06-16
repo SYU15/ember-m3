@@ -123,7 +123,7 @@ module('unit/record-array', function(hooks) {
     let book2 = this.store.peekRecord('com.example.bookstore.Book', 'isbn:2');
 
     let internalModels = [book2];
-    recordArray._setInternalModels(internalModels);
+    recordArray._setObjects(internalModels);
 
     assert.equal(recordArray._resolved, true, 'setting internal models resolves the record array');
     assert.deepEqual(
@@ -159,17 +159,17 @@ module('unit/record-array', function(hooks) {
 
       assert.deepEqual(recordArray.toArray().mapBy('id'), [], 'record array empty');
 
-      recordArray._pushInternalModels([book1._internalModel, book2._internalModel]);
+      recordArray._pushObjects([book1._internalModel, book2._internalModel]);
 
       assert.deepEqual(
         recordArray.toArray().mapBy('id'),
         ['isbn:1', 'isbn:2'],
-        '_pushInternalModels'
+        '_pushObjects'
       );
 
-      recordArray._removeInternalModels([book1._internalModel]);
+      recordArray._removeObjects([book1._internalModel]);
 
-      assert.deepEqual(recordArray.toArray().mapBy('id'), ['isbn:2'], '_removeInternalModels');
+      assert.deepEqual(recordArray.toArray().mapBy('id'), ['isbn:2'], '_removeObjects');
     });
 
     test('adding internal models forces resolution', function(assert) {
@@ -185,9 +185,9 @@ module('unit/record-array', function(hooks) {
       assert.equal(recordArray._resolved, false, 'length does not resolve');
 
       let book2 = this.store.peekRecord('com.example.bookstore.Book', 'isbn:2');
-      recordArray._pushInternalModels([book2._internalModel]);
+      recordArray._pushObjects([book2._internalModel]);
 
-      assert.equal(recordArray._resolved, true, '_pushInternalModels resolves');
+      assert.equal(recordArray._resolved, true, '_pushObjects resolves');
       assert.deepEqual(recordArray.toArray().mapBy('id'), ['isbn:1', 'isbn:2'], 'records added');
     });
 
@@ -207,9 +207,9 @@ module('unit/record-array', function(hooks) {
       assert.equal(recordArray.length, 2, 'length is 2');
 
       let book2 = this.store.peekRecord('com.example.bookstore.Book', 'isbn:2');
-      recordArray._removeInternalModels([book2._internalModel]);
+      recordArray._removeObjects([book2._internalModel]);
 
-      assert.equal(recordArray._resolved, false, '_removeInternalModels does not resolve');
+      assert.equal(recordArray._resolved, false, '_removeObjects does not resolve');
       assert.deepEqual(recordArray.toArray().mapBy('id'), ['isbn:1'], 'records removed');
     });
   });
