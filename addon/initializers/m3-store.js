@@ -10,12 +10,15 @@ import QueryCache from '../query-cache';
 import { flushChanges } from '../utils/notify-changes';
 
 export let recordDataToRecordMap = new WeakMap();
+//TODO we should figure out a place for QC to live
+export let recordDataToQueryCache = new WeakMap();
 
 const STORE_OVERRIDES = {
   _schemaManager: inject('m3-schema-manager'),
 
   init() {
     this._super(...arguments);
+    let queryCache;
     this._queryCache = new QueryCache({ store: this });
     this._globalM3Cache = new Object(null);
     this._recordDataToRecordMap = recordDataToRecordMap;
@@ -63,6 +66,8 @@ const STORE_OVERRIDES = {
   },
 
   instantiateRecord(modelName, createOptions, recordData) {
+    debugger;
+    recordDataToQueryCache.set(recordData, this._queryCache);
     // TODO NOW deal with this
     if (get(this, '_schemaManager').includesModel(modelName)) {
       delete createOptions.container;

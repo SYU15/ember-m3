@@ -188,6 +188,7 @@ export default class QueryCache {
   }
 
   _createResult(payload, query, array) {
+    debugger;
     let internalModelOrModels = this._store._push(payload);
 
     if (array) {
@@ -227,8 +228,10 @@ export default class QueryCache {
       query,
     });
 
-    array._setInternalModels(internalModels);
+    //TODO make this not eager
+    array._setInternalModels(internalModels.map(im => im.getRecord()));
 
+    //TODO deal with this
     this._recordArrayManager._adapterPopulatedRecordArrays.push(array);
 
     return array;

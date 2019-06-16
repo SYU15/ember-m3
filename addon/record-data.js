@@ -5,7 +5,7 @@ import { copy } from './utils/copy';
 import { assert } from '@ember/debug';
 import Ember from 'ember';
 import { IS_RECORD_DATA } from 'ember-compatibility-helpers';
-import { recordDataToRecordMap } from './initializers/m3-store';
+import { recordDataToRecordMap, recordDataToQueryCache } from './initializers/m3-store';
 
 const emberAssign = assign || merge;
 
@@ -403,6 +403,10 @@ export default class M3RecordData {
   }
 
   setIsDeleted(value) {
+    if (value) {
+      // TODO check how rollback behaves
+      this.removeFromRecordArrays();
+    }
     this._isDeleted = value;
   }
 
@@ -479,6 +483,11 @@ export default class M3RecordData {
       return;
     }
     this.removeFromRecordArrays();
+    let queryCache = recordDataToQueryCache.get(this);
+    //TODO double check how we get in a state where we dont have the record
+    if (queryCache) {
+      queryCache.unloadRecord(recordDataToRecordMap.get(this));
+    }
     if (this._baseRecordData || this._areAllProjectionsDestroyed()) {
       this._destroy();
     }

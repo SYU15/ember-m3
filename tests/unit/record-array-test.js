@@ -122,7 +122,7 @@ module('unit/record-array', function(hooks) {
 
     let book2 = this.store.peekRecord('com.example.bookstore.Book', 'isbn:2');
 
-    let internalModels = [book2._internalModel];
+    let internalModels = [book2];
     recordArray._setInternalModels(internalModels);
 
     assert.equal(recordArray._resolved, true, 'setting internal models resolves the record array');
