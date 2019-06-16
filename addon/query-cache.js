@@ -188,7 +188,6 @@ export default class QueryCache {
   }
 
   _createResult(payload, query, array) {
-    debugger;
     let objectOrModels = this._store._push(payload);
 
     if (array) {

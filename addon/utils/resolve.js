@@ -1,4 +1,6 @@
 import { dasherize } from '@ember/string';
+import { recordDataToRecordMap } from '../initializers/m3-store';
+
 
 export function computeAttributeReference(key, value, modelName, schemaInterface, schema) {
   schemaInterface._beginDependentKeyResolution(key);
@@ -19,10 +21,21 @@ export function resolveReferencesWithInternalModels(store, references) {
     if (reference.type) {
       return store.peekRecord(dasherize(reference.type), reference.id);
     } else {
+      let rd = store._globalM3CacheRD[reference.id];
+      if (rd) {
+        let record = recordDataToRecordMap.get(rd);
+        if (recordDataToRecordMap.get(rd)) {
+          return record;
+        } else {
+          return store.instantiateRecord(rd.modelName, { store }, rd);
+        }
+      }
+      /*
       let im = store._globalM3Cache[reference.id];
       if (im) {
         return im.getRecord();
       }
+      */
     }
   });
 }

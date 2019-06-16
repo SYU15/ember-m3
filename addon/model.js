@@ -256,7 +256,6 @@ export default class MegamorphicModel extends EmberObject {
   unloadRecord() {
     // can't call unloadRecord on nested m3 models
     this._internalModel.unloadRecord();
-    debugger;
     this._store._queryCache.unloadRecord(this);
   }
 
