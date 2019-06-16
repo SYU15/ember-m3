@@ -20,7 +20,6 @@ const STORE_OVERRIDES = {
     this._super(...arguments);
     let queryCache;
     this._queryCache = new QueryCache({ store: this });
-    this._globalM3Cache = new Object(null);
     this._globalM3CacheRD = new Object(null);
     this._recordDataToRecordMap = recordDataToRecordMap;
   },

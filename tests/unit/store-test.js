@@ -118,7 +118,7 @@ module('unit/store', function(hooks) {
     run(() => this.store.unloadAll());
 
     assert.deepEqual(
-      Object.keys(this.store._globalM3Cache),
+      Object.keys(this.store._globalM3CacheRD),
       [],
       'global cache can unload all records'
     );
