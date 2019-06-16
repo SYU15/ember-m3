@@ -16,11 +16,13 @@ export function computeNestedModel(key, value, modelName, schemaInterface, schem
 
 export function resolveReferencesWithInternalModels(store, references) {
   return references.map(reference => {
-    let im = reference.type
-      ? store._internalModelForId(dasherize(reference.type), reference.id)
-      : store._globalM3Cache[reference.id];
-    if (im) {
-      return im.getRecord();
+    if (reference.type) {
+      return store.peekRecord(dasherize(reference.type), reference.id);
+    } else {
+      let im = store._globalM3Cache[reference.id];
+      if (im) {
+        return im.getRecord();
+      }
     }
   });
 }
