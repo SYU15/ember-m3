@@ -38,7 +38,6 @@ module('unit/record-array', function(hooks) {
         ],
       });
     });
-
     this.createRecordArray = function() {
       let recordArray = M3RecordArray.create();
       recordArray.store = this.store;
@@ -161,11 +160,7 @@ module('unit/record-array', function(hooks) {
 
       recordArray._pushObjects([book1._internalModel, book2._internalModel]);
 
-      assert.deepEqual(
-        recordArray.toArray().mapBy('id'),
-        ['isbn:1', 'isbn:2'],
-        '_pushObjects'
-      );
+      assert.deepEqual(recordArray.toArray().mapBy('id'), ['isbn:1', 'isbn:2'], '_pushObjects');
 
       recordArray._removeObjects([book1._internalModel]);
 

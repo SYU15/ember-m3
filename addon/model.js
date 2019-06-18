@@ -535,8 +535,7 @@ const dirtyType = computed(function() {
   }
 }).volatile();
 
-const currentState = computed({ get: 
-  function() {
+const currentState = computed(function() {
   let stateName = 'root';
   stateName = stateName + '.loaded';
   if (this._recordData.hasChangedAttributes()) {
@@ -545,13 +544,8 @@ const currentState = computed({ get:
     stateName = stateName + '.saved';
   }
   return {
-    stateName
-  }
-},
-  set: function() {
-    debugger
-
-  }
+    stateName,
+  };
 }).volatile();
 // STATE PROPS
 defineProperty(MegamorphicModel.prototype, 'isLoading', isLoaded);
@@ -572,7 +566,6 @@ defineProperty(MegamorphicModel.prototype, 'isNew', isNew);
 defineProperty(MegamorphicModel.prototype, 'isSaving', isSaving);
 
 defineProperty(MegamorphicModel.prototype, 'currentState', currentState);
-
 
 export class EmbeddedMegamorphicModel extends MegamorphicModel {
   save() {
