@@ -84,7 +84,6 @@ export default class MegamorphicModel extends EmberObject {
     recordDataToRecordMap.set(properties._recordData, this);
     this._store = properties.store;
     this._recordData = properties._recordData;
-    this._internalModel = properties._internalModel;
     this._cache = Object.create(null);
     this._schema = get(properties.store, '_schemaManager');
 
@@ -230,6 +229,7 @@ export default class MegamorphicModel extends EmberObject {
   }
 
   save(options) {
+    debugger;
     // TODO: we could return a PromiseObject as DS.Model does
     // this becomes this.store.scheduleSave(identifier)
     return this._internalModel.save(options).then(() => this);
@@ -313,8 +313,9 @@ export default class MegamorphicModel extends EmberObject {
   }
 
   set id(value) {
+    //TODO need a test for this
     if (!this._init) {
-      this._internalModel.id = value;
+      //this._internalModel.id = value;
       return;
     }
 
@@ -510,17 +511,52 @@ const isNew = computed(function() {
 }).volatile();
 
 const isSaving = computed(function() {
-  debugger;
   let requests = this.store.requestCache.getPending(identifierForModel(this));
   return !!requests.find(req => req.request.data.op === 'saveRecord');
 }).volatile();
 
+const isLoaded = computed(function() {
+  return this._recordData._pushed;
+}).volatile();
+
+const isLoading = computed(function() {
+  return !this.get('isLoaded');
+}).volatile();
+
+const dirtyType = computed(function() {
+  if (this._recordData.isNew()) {
+    return 'created';
+  }
+  if (this._recordData.isDeleted()) {
+    return 'deleted';
+  }
+  if (this._recordData.hasChangedAttributes()) {
+    return 'updated';
+  }
+}).volatile();
+
+const currentState = computed({ get: 
+  function() {
+  let stateName = 'root';
+  stateName = stateName + '.loaded';
+  if (this._recordData.hasChangedAttributes()) {
+    stateName = stateName + '.updated.uncommitted';
+  } else {
+    stateName = stateName + '.saved';
+  }
+  return {
+    stateName
+  }
+},
+  set: function() {
+    debugger
+
+  }
+}).volatile();
 // STATE PROPS
-/*
-defineProperty(MegamorphicModel.prototype, 'isLoading', retrieveFromCurrentState);
-defineProperty(MegamorphicModel.prototype, 'isLoaded', retrieveFromCurrentState);
-defineProperty(MegamorphicModel.prototype, 'dirtyType', retrieveFromCurrentState);
-*/
+defineProperty(MegamorphicModel.prototype, 'isLoading', isLoaded);
+defineProperty(MegamorphicModel.prototype, 'isLoaded', isLoading);
+defineProperty(MegamorphicModel.prototype, 'dirtyType', dirtyType);
 
 defineProperty(MegamorphicModel.prototype, 'isDirty', isDirty);
 defineProperty(
@@ -534,6 +570,9 @@ defineProperty(MegamorphicModel.prototype, 'isValid', isValid);
 defineProperty(MegamorphicModel.prototype, 'isDeleted', isDeleted);
 defineProperty(MegamorphicModel.prototype, 'isNew', isNew);
 defineProperty(MegamorphicModel.prototype, 'isSaving', isSaving);
+
+defineProperty(MegamorphicModel.prototype, 'currentState', currentState);
+
 
 export class EmbeddedMegamorphicModel extends MegamorphicModel {
   save() {

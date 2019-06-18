@@ -68,6 +68,7 @@ const STORE_OVERRIDES = {
     // TODO NOW deal with this
     if (get(this, '_schemaManager').includesModel(modelName)) {
       delete createOptions.container;
+      delete createOptions.currentState;
       createOptions._recordData = recordData;
       let model = new MegamorphicModel(createOptions);
       //recordDataToRecordMap.set(recordData, model);

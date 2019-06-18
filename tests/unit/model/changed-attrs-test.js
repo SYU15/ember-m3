@@ -67,9 +67,10 @@ module('unit/model/changed-attrs', function(hooks) {
         },
       });
     });
+    debugger
     assert.ok(!model.get('isDirty'), 'model currently not dirty');
     assert.equal(
-      model._internalModel.currentState.stateName,
+      model.currentState.stateName,
       'root.loaded.saved',
       'model.state loaded.saved'
     );
@@ -80,7 +81,7 @@ module('unit/model/changed-attrs', function(hooks) {
     });
     assert.ok(model.get('isDirty'), 'model is dirty as new values are set on the model');
     assert.equal(
-      model._internalModel.currentState.stateName,
+      model.currentState.stateName,
       'root.loaded.updated.uncommitted',
       'model state is updated.uncommitted'
     );
@@ -147,7 +148,7 @@ module('unit/model/changed-attrs', function(hooks) {
     assert.deepEqual(model.changedAttributes(), {}, 'initially no attributes are changed');
     assert.ok(!model.get('isDirty'), 'model currently not dirty');
     assert.equal(
-      model._internalModel.currentState.stateName,
+      model.currentState.stateName,
       'root.loaded.saved',
       'model.state loaded.saved'
     );
@@ -196,7 +197,7 @@ module('unit/model/changed-attrs', function(hooks) {
     );
     assert.ok(model.get('isDirty'), 'model is dirty as new values are set on the model');
     assert.equal(
-      model._internalModel.currentState.stateName,
+      model.currentState.stateName,
       'root.loaded.updated.uncommitted',
       'model state is updated.uncommitted'
     );
@@ -278,7 +279,7 @@ module('unit/model/changed-attrs', function(hooks) {
     });
     assert.ok(!model.get('isDirty'), 'model currently not dirty');
     assert.equal(
-      model._internalModel.currentState.stateName,
+      model.currentState.stateName,
       'root.loaded.saved',
       'model.state loaded.saved'
     );
@@ -299,7 +300,7 @@ module('unit/model/changed-attrs', function(hooks) {
     );
     assert.ok(model.get('isDirty'), 'model is dirty as new values are set on the model');
     assert.equal(
-      model._internalModel.currentState.stateName,
+      model.currentState.stateName,
       'root.loaded.updated.uncommitted',
       'model state is updated.uncommitted'
     );
@@ -321,7 +322,7 @@ module('unit/model/changed-attrs', function(hooks) {
     });
     assert.ok(!model.get('isDirty'), 'model currently not dirty');
     assert.equal(
-      model._internalModel.currentState.stateName,
+      model.currentState.stateName,
       'root.loaded.saved',
       'model.state loaded.saved'
     );
@@ -362,7 +363,7 @@ module('unit/model/changed-attrs', function(hooks) {
     // Model is dirty
     assert.ok(model.get('isDirty'), 'model is dirty as new values are set on the model');
     assert.equal(
-      model._internalModel.currentState.stateName,
+      model.currentState.stateName,
       'root.loaded.updated.uncommitted',
       'model state is updated.uncommitted'
     );
@@ -403,7 +404,7 @@ module('unit/model/changed-attrs', function(hooks) {
 
     assert.ok(!model.get('isDirty'), 'model currently not dirty');
     assert.equal(
-      model._internalModel.currentState.stateName,
+      model.currentState.stateName,
       'root.loaded.saved',
       'model.state loaded.saved'
     );
@@ -428,7 +429,7 @@ module('unit/model/changed-attrs', function(hooks) {
     // Model is dirty
     assert.ok(model.get('isDirty'), 'model is dirty as new values are set on the model');
     assert.equal(
-      model._internalModel.currentState.stateName,
+      model.currentState.stateName,
       'root.loaded.updated.uncommitted',
       'model state is updated.uncommitted'
     );
@@ -494,7 +495,7 @@ module('unit/model/changed-attrs', function(hooks) {
     });
     assert.ok(model.get('isDirty'), 'model is dirty as new values are set on the model');
     assert.equal(
-      model._internalModel.currentState.stateName,
+      model.currentState.stateName,
       'root.loaded.updated.uncommitted',
       'model state is updated.uncommitted'
     );
@@ -505,7 +506,7 @@ module('unit/model/changed-attrs', function(hooks) {
 
     assert.ok(!model.get('isDirty'), 'model currently not dirty');
     assert.equal(
-      model._internalModel.currentState.stateName,
+      model.currentState.stateName,
       'root.loaded.saved',
       'after rolling back model.state loaded.saved'
     );

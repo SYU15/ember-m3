@@ -165,6 +165,7 @@ export default class M3RecordData {
     this._projections = null;
     this._recordArrays = new Set();
 
+    this._pushed = false;
     this._initBaseRecordData();
   }
 
@@ -196,6 +197,7 @@ export default class M3RecordData {
     notifyRecord = false,
     suppressProjectionNotifications = false
   ) {
+    this._pushed = true;
     if (this._baseRecordData) {
       this._baseRecordData.pushData(
         jsonApiResource,
@@ -514,6 +516,7 @@ export default class M3RecordData {
   removeFromInverseRelationships() {}
 
   clientDidCreate() {
+    this._pushed = true;
     this._isNew = true;
   }
 
@@ -548,7 +551,7 @@ export default class M3RecordData {
 
   attributesDef() {
     let attrs = {};
-    this.eachAttribute((attr, key) => {
+    this.eachAttribute(attr => {
       attrs[attr] = { key: attr };
     });
     return attrs;
