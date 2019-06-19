@@ -499,8 +499,8 @@ const isDirty = computed(function() {
   }
   return (
     this._recordData.hasChangedAttributes() ||
-    this._recordData.isNew() ||
-    this._recordData.isDeleted()
+    ((this._recordData.isNew() || this._recordData.isDeleted()) &&
+      this._recordData.isNew() !== this._recordData.isDeleted())
   );
 }).volatile();
 
