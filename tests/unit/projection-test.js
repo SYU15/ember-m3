@@ -2862,6 +2862,7 @@ module('unit/projection', function(hooks) {
         set(baseModel, 'chapter-1', BOOK_CHAPTER_2);
       });
 
+      debugger;
       assert.equal(
         get(projectedExcerpt, '_internalModel.currentState.isDirty'),
         true,

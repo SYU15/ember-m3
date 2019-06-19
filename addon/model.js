@@ -86,13 +86,38 @@ export default class MegamorphicModel extends EmberObject {
     this._recordData = properties._recordData;
     this._cache = Object.create(null);
     this._schema = get(properties.store, '_schemaManager');
+    this._invalidRequests = [];
+    this._errorRequests = [];
+    this._lastError = null;
 
     this._topModel = this._topModel || this;
     this._parentModel = this._parentModel || null;
     this._errors = DS.Errors.create();
     this._init = true;
+    this._store.requestCache.subscribe(identifierForModel(this), request => {
+      if (request.state === 'rejected') {
+        // TODO filter out queries
+        this._lastError = request;
+        if (!(request.result && request.result.error instanceof DS.InvalidError)) {
+          this._errorRequests.push(request);
+        } else {
+          this._invalidRequests.push(request);
+        }
+      } else if (request.state === 'fulfilled') {
+        this._invalidRequests = [];
+        this._errorRequests = [];
+        this._lastError = null;
+      }
+      this._notifyNetworkChanges();
+    });
 
     this._flushInitProperties();
+  }
+
+  _notifyNetworkChanges() {
+    ['isSaving', 'isValid', 'isError', 'adapterError', 'isReloading'].forEach(key =>
+      notifyPropertyChange(this, key)
+    );
   }
 
   _flushInitProperties() {
@@ -109,25 +134,9 @@ export default class MegamorphicModel extends EmberObject {
     }
   }
 
-  _getInvalidRequest() {
-    //temp until identifiers
-    let identifier = { id: this.id, modelName: this.modelName };
-    //let requests = this.store.requestCache.getFinished(identifierForModel(this));
-    let requests = this.store.requestCache.getFinished(identifier);
-    return requests.find(
-      req => req.state === 'rejected' && req.result.error instanceof InvalidError
-    );
-  }
-
   _markInvalidRequestAsClean() {
-    let invalidRequest = this._getInvalidRequest();
-    if (invalidRequest) {
-      ignoreInvalidRequestsMap.set(invalidRequest, true);
-    }
-  }
-
-  _getInvalidRequestsToIgnore() {
-    return ignoreInvalidRequestsMap;
+    this._invalidRequests = [];
+    this._notifyNetworkChanges();
   }
 
   static get isM3Model() {
@@ -425,16 +434,9 @@ export default class MegamorphicModel extends EmberObject {
   _removeError(key) {
     // Remove errors for the property
     this._errors.remove(key);
-    /*
-    if (
-      this._im &&
-      this._im.currentState &&
-      !this._im.currentState.isValid &&
-      get(this._errors, 'length') === 0
-    ) {
-      this._updateCurrentState(updatedUncommitted);
+    if (get(this._errors, 'length') === 0) {
+      this._markInvalidRequestAsClean();
     }
-    */
   }
 
   static toString() {
@@ -458,6 +460,9 @@ MegamorphicModel.prototype._recordData = null;
 MegamorphicModel.prototype._parentModel = null;
 MegamorphicModel.prototype._topModel = null;
 MegamorphicModel.prototype._errors = null;
+MegamorphicModel.prototype._invalidRequests = null;
+MegamorphicModel.prototype._errorRequests = null;
+MegamorphicModel.prototype._lastError = null;
 MegamorphicModel.prototype.currentState = null;
 MegamorphicModel.prototype.isError = null;
 MegamorphicModel.prototype.adapterError = null;
@@ -478,18 +483,17 @@ const isValid = computed(function() {
   if (this.get('errors.length') > 0) {
     return false;
   }
-
-  let invalidRequest = this._getInvalidRequest();
+  let invalidLength = this._invalidRequests.length;
+  if (invalidLength === 0) {
+    return true;
+  }
+  let invalidRequest = this._invalidRequests[invalidLength - 1];
   if (!invalidRequest) {
     return true;
   } else {
-    if (this._getInvalidRequestsToIgnore().get(invalidRequest)) {
-      return true;
-    } else {
-      return false;
-    }
+    return false;
   }
-}).volatile();
+});
 
 /**
  */
@@ -513,9 +517,9 @@ const isNew = computed(function() {
 }).volatile();
 
 const isSaving = computed(function() {
-  let requests = this.store.requestCache.getPending(identifierForModel(this));
+  let requests = this.store.requestCache.getPendingRequests(identifierForModel(this));
   return !!requests.find(req => req.request.data.op === 'saveRecord');
-}).volatile();
+});
 
 const isLoaded = computed(function() {
   return this._recordData._pushed;
