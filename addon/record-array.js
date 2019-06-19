@@ -76,8 +76,13 @@ export default class M3RecordArray extends ArrayProxy {
         for (let j = 0; j < this.content.length; ++j) {
           let { id, type } = this.content[j];
           let dtype = type && dasherize(type);
-
-          if ((dtype === null || dtype === object.modelName) && id === object.id) {
+          // TODO we might not need the second condition
+          if (
+            (dtype === null ||
+              dtype === object.modelName ||
+              dtype === object._recordData.modelName) &&
+            id === object.id
+          ) {
             this.content.removeAt(j);
             break;
           }

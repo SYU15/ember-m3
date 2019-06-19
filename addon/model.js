@@ -229,7 +229,6 @@ export default class MegamorphicModel extends EmberObject {
   }
 
   save(options) {
-    debugger;
     // TODO: we could return a PromiseObject as DS.Model does
     // this becomes this.store.scheduleSave(identifier)
     return this.store.scheduleSave(this, options).then(() => this);
@@ -495,6 +494,9 @@ const isValid = computed(function() {
 /**
  */
 const isDirty = computed(function() {
+  if (this._topModel !== this) {
+    return this._topModel.get('isDirty');
+  }
   return (
     this._recordData.hasChangedAttributes() ||
     this._recordData.isNew() ||
@@ -586,8 +588,6 @@ export class EmbeddedMegamorphicModel extends MegamorphicModel {
       { id: 'ember-m3.nested-model-unloadRecord' }
     );
   }
-
-  // no special behaviour for ids of embedded/nested models
 
   get id() {
     return this.unknownProperty('id');

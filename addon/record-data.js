@@ -275,7 +275,25 @@ export default class M3RecordData {
     if (this._baseRecordData) {
       return this._baseRecordData.hasChangedAttributes();
     } else {
-      return this.__attributes !== null && Object.keys(this.__attributes).length > 0;
+      let isDirty = this.__attributes !== null && Object.keys(this.__attributes).length > 0;
+      if (isDirty) {
+        return true;
+      }
+      let recordDatas = Object.values(this._childRecordDatas);
+      recordDatas.forEach(child => {
+        if (!Array.isArray(child)) {
+          if (child.hasChangedAttributes()) {
+            isDirty = true;
+          }
+        } else {
+          child.forEach(rd => {
+            if (rd.hasChangedAttributes()) {
+              isDirty = true;
+            }
+          });
+        }
+      });
+      return isDirty;
     }
   }
 
