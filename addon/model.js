@@ -212,7 +212,7 @@ export default class MegamorphicModel extends EmberObject {
 
   unloadRecord() {
     // can't call unloadRecord on nested m3 models
-    this._internalModel.unloadRecord();
+    this.store.unloadRecord(this);
     this._store._queryCache.unloadRecord(this);
   }
 
@@ -221,7 +221,7 @@ export default class MegamorphicModel extends EmberObject {
   }
 
   serialize(options) {
-    return this._internalModel.createSnapshot().serialize(options);
+    return this.store.serializeRecord(this, options);
   }
 
   toJSON() {
@@ -232,7 +232,7 @@ export default class MegamorphicModel extends EmberObject {
     debugger;
     // TODO: we could return a PromiseObject as DS.Model does
     // this becomes this.store.scheduleSave(identifier)
-    return this._internalModel.save(options).then(() => this);
+    return this.store.scheduleSave(this, options).then(() => this);
   }
 
   reload(options = {}) {

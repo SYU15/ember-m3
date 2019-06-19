@@ -158,11 +158,11 @@ module('unit/record-array', function(hooks) {
 
       assert.deepEqual(recordArray.toArray().mapBy('id'), [], 'record array empty');
 
-      recordArray._pushObjects([book1._internalModel, book2._internalModel]);
+      recordArray._pushObjects([book1, book2]);
 
       assert.deepEqual(recordArray.toArray().mapBy('id'), ['isbn:1', 'isbn:2'], '_pushObjects');
 
-      recordArray._removeObjects([book1._internalModel]);
+      recordArray._removeObjects([book1]);
 
       assert.deepEqual(recordArray.toArray().mapBy('id'), ['isbn:2'], '_removeObjects');
     });
@@ -180,7 +180,7 @@ module('unit/record-array', function(hooks) {
       assert.equal(recordArray._resolved, false, 'length does not resolve');
 
       let book2 = this.store.peekRecord('com.example.bookstore.Book', 'isbn:2');
-      recordArray._pushObjects([book2._internalModel]);
+      recordArray._pushObjects([book2]);
 
       assert.equal(recordArray._resolved, true, '_pushObjects resolves');
       assert.deepEqual(recordArray.toArray().mapBy('id'), ['isbn:1', 'isbn:2'], 'records added');
@@ -202,7 +202,7 @@ module('unit/record-array', function(hooks) {
       assert.equal(recordArray.length, 2, 'length is 2');
 
       let book2 = this.store.peekRecord('com.example.bookstore.Book', 'isbn:2');
-      recordArray._removeObjects([book2._internalModel]);
+      recordArray._removeObjects([book2]);
 
       assert.equal(recordArray._resolved, false, '_removeObjects does not resolve');
       assert.deepEqual(recordArray.toArray().mapBy('id'), ['isbn:1'], 'records removed');
