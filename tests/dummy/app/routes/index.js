@@ -26,6 +26,31 @@ export default Route.extend({
             readerComments: ['urn:comment:1', 'urn:comment:2'],
           },
         },
+        included: [
+          {
+            id: 'testing1',
+            type: 'com.example.bookstore.Book1',
+            attributes: {
+              $type: 'com.example.bookstore.Book1',
+              name: `New name`,
+              author: 'urn:author:1234',
+              pubDate: 'April 2019',
+              readerComments: ['urn:comment:1', 'urn:comment:2'],
+            },
+          },
+        ],
+      });
+
+      this.store.push({
+        data: {
+          id: 'cake1',
+          type: 'cake',
+          attributes: {
+            firstName: 'cake first',
+            lastName: 'last',
+            birthday: '1234',
+          },
+        },
       });
     },
 

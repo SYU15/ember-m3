@@ -41,4 +41,9 @@ Schema.prototype.models = {
       pubDate: dateTransform,
     },
   },
+  'com.example.bookstore.book1': {
+    transforms: {
+      pubDate: dateTransform,
+    },
+  },
 };

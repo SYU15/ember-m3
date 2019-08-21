@@ -1,9 +1,11 @@
 import { A, isArray } from '@ember/array';
-import DataAdapter from '@ember/debug/data-adapter';
+// import DataAdapter from '@ember/debug/data-adapter';
 import { get, setProperties, defineProperty } from '@ember/object';
 import { inject } from '@ember/service';
 import seenTypesPerStore from '../utils/seen-types-per-store';
 import { default as MegamorphicModel } from '../model';
+import Model from '@ember-data/model';
+import { DebugAdapter as DataAdapter } from 'ember-data/-private';
 
 /*
   Extend `Ember.DataAdapter` with m3 specific code.
@@ -62,13 +64,27 @@ export default class DebugAdapter extends DataAdapter {
   }
 
   /**
+    Detect whether a class is a DS.Model
+    @public
+    @method detect
+    @param {DS.Model} typeClass
+    @return {Boolean} Whether the typeClass is a DS.Model class or not
+  */
+  detect(typeClass) {
+    debugger;
+    return typeClass !== Model && Model.detect(typeClass);
+  }
+
+  /**
     Fetches all Megamorphic model types
     @private
     @method getModelTypes
     @return {Array} Array of model types
   */
   getModelTypes() {
-    let modelTypes = [];
+    debugger;
+    // let modelTypes = [];
+    let modelTypes = super.getModelTypes();
     let allModelNames = seenTypesPerStore.get(get(this, 'store'));
 
     allModelNames.forEach(name => {
